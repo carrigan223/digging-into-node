@@ -1,14 +1,42 @@
-// My first Node.js program
+#!/user/bin/env node
+"use strict";
 
-//process.stdout.write("Hello world");
+var path = require("path");
+var fs = require("fs");
 
- console.log("Hello world");
-//console.log is essentially a standard output 
-//which is wrapped in dev convenience
+var args = require("minimist")(process.argv.slice(2), {
+  boolean: ["help"],
+  string: ["file"],
+});
 
-console.error("oops");
+if (args.help) {
+  printHelp();
+} else if (args.file) {
+  processFile(path.resolve(args.file));
+} else {
+  error("Incorrect Usage", true);
+}
 
-// the > symbol is a redirect if used with the node command to dev/null
-//we can tell if its std.out or std.err, we have a different stream for
-// handling errors which have dev benefits, the third standard stream
-// is standard in much more touchy we will use it later with a package
+//********************
+
+function processFile(filePath) {
+  var contents = fs.readFileSync(filePath);
+  process.stdout.write(contents);
+}
+
+function error(msg, includeHelp = false) {
+  console.error(msg);
+  if (includeHelp) {
+    console.log("");
+    printHelp();
+  }
+}
+
+function printHelp() {
+  console.log("ex1 usage:");
+  console.log(" ex1.js --file={FILENAME}");
+  console.log("");
+  console.log("--help       print this help");
+  console.log("--file={FILENAME}    process the file");
+  console.log("");
+}

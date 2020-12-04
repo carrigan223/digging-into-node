@@ -1,0 +1,13 @@
+
+// the > symbol is a redirect if used with the node command to dev/null
+//we can tell if its std.out or std.err, we have a different stream for
+// handling errors which have dev benefits, the third standard stream
+// is standard in much more touchy we will use it later with a package
+
+
+//console.log is essentially a standard output 
+//which is wrapped in dev convenience
+
+
+//process.stdout.write("Hello world"); 
+this is going straight to the i/o no console
