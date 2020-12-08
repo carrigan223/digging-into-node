@@ -1,26 +1,41 @@
 #!/user/bin/env node
 "use strict";
 
+var util = require("util");
 var path = require("path");
 var fs = require("fs");
 
+var getStdin = require("get-stdin");
+
 var args = require("minimist")(process.argv.slice(2), {
-  boolean: ["help"],
+  boolean: ["help", "in"],
   string: ["file"],
 });
 
+if (process.env.HELLO) {
+  console.log(process.env.HELLO);
+}
+
 if (args.help) {
   printHelp();
+} else if (args.in || args._.includes("-")) {
+  getStdin().then(processFile).catch(error);
 } else if (args.file) {
-  processFile(path.resolve(args.file));
+  fs.readFile(path.resolve(args.file), function onContents(err, contents) {
+    if (err) {
+      error(err.toString());
+    } else {
+      processFile(contents.toString());
+    }
+  });
 } else {
   error("Incorrect Usage", true);
 }
 
 //********************
 
-function processFile(filePath) {
-  var contents = fs.readFileSync(filePath);
+function processFile(contents) {
+  contents = contents.toUpperCase();
   process.stdout.write(contents);
 }
 
@@ -38,5 +53,6 @@ function printHelp() {
   console.log("");
   console.log("--help       print this help");
   console.log("--file={FILENAME}    process the file");
+  console.log("--in, -                  process stdin");
   console.log("");
 }
